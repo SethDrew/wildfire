@@ -79,24 +79,24 @@ def classify_random_forest(training_features, training_label, testing_features, 
 def main():
     num_inducing = 100
 
-    # training_features, training_label, testing_features, testing_label = read_data(location_info=False)
-    # print('Linear classification (without location):', classify_linear_model(training_features, training_label, testing_features, testing_label))
-    # print('RBF SVM (without location):', classify_SVM(training_features, training_label, testing_features, testing_label))
-    # print('Random forest (without location):', classify_random_forest(training_features, training_label, testing_features, testing_label))
-    # print('GP without location:',
-    #       GP_gpflow.classify_GP_wo_loc(training_features, training_label, testing_features, testing_label,
-    #                                    num_inducing=num_inducing, input_dim=7))
+    training_features, training_label, testing_features, testing_label = read_data(location_info=False)
+    print('Linear classification (without location):', classify_linear_model(training_features, training_label, testing_features, testing_label))
+    print('RBF SVM (without location):', classify_SVM(training_features, training_label, testing_features, testing_label))
+    print('Random forest (without location):', classify_random_forest(training_features, training_label, testing_features, testing_label))
+    print('GP without location:',
+          GP_gpflow.classify_GP_wo_loc(training_features, training_label, testing_features, testing_label,
+                                       num_inducing=num_inducing, input_dim=7))
 
     training_features, training_label, testing_features, testing_label = read_data(location_info=True)
-    # print('Linear classification (with location):', classify_linear_model(training_features, training_label, testing_features, testing_label))
-    # print('RBF SVM (with location):', classify_SVM(training_features, training_label, testing_features, testing_label))
-    # print('Random forest (with location):', classify_random_forest(training_features, training_label, testing_features, testing_label))
+    print('Linear classification (with location):', classify_linear_model(training_features, training_label, testing_features, testing_label))
+    print('RBF SVM (with location):', classify_SVM(training_features, training_label, testing_features, testing_label))
+    print('Random forest (with location):', classify_random_forest(training_features, training_label, testing_features, testing_label))
     print('GP with location (all features as kernel):',
           GP_gpflow.classify_GP_wo_loc(training_features, training_label, testing_features, testing_label,
                                        num_inducing=num_inducing, input_dim=9))
-    # print('GP with location (features as mean function, location as kernel):',
-    #       GP_gpflow.classify_GP_loc(training_features, training_label, testing_features, testing_label,
-    #                                 num_inducing=num_inducing))
+    print('GP with location (features as mean function, location as kernel):',
+          GP_gpflow.classify_GP_loc(training_features, training_label, testing_features, testing_label,
+                                    num_inducing=num_inducing))
 
     # a = []
     # for num_inducing in range(10,501,10):

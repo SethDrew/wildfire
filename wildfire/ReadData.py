@@ -2,6 +2,7 @@ import numpy as np
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 import geopandas as gpd
+import pandas as pd
 
 
 def fire_data_with_geopandas(filename):
@@ -35,8 +36,9 @@ def read_features(filename):
     return data
 
 
-def get_features(indices, features, feature_names):
+def get_features(indices, features, feature_names, fire_map=None):
     output_data = []
+    areas = []
     for itr, index in enumerate(indices):
         this_index_data = []
         data = features[index]
@@ -48,7 +50,12 @@ def get_features(indices, features, feature_names):
                     break
         if len(this_index_data) == 9:
             output_data.append(this_index_data)
-    return np.array(output_data)
+            if fire_map is not None:
+                areas.append(fire_map.GIS_ACRES[index])
+    if fire_map is None:
+        return np.array(output_data)
+    else:
+        return np.array(output_data), np.array(areas)
 
 
 def construct_feature_matrices(fire_map, features_file, year_start, year_end, year_predict):
@@ -106,20 +113,20 @@ def get_data(fire_map_f, positive_f, negative_training_f, negative_testing_f, pl
     training_n, testing_n = construct_negative_examples(negative_training_f, negative_testing_f)
 
     training_features = np.concatenate((training_p, training_n), axis=0)
-    training_label = np.append(np.ones(training_p.shape[0]), -1*np.ones(training_n.shape[0]))
+    training_label = np.append(np.ones(training_p.shape[0]), np.zeros(training_n.shape[0]))
     testing_features = np.concatenate((testing_p, testing_n), axis=0)
-    testing_label = np.append(np.ones(testing_p.shape[0]), -1*np.ones(testing_n.shape[0]))
+    testing_label = np.append(np.ones(testing_p.shape[0]), np.zeros(testing_n.shape[0]))
 
     if plot_fig:
         fig = plt.figure()
         ax1 = fig.add_subplot(121)
         ax1.set_title('positive')
-        ax1.scatter(training_p[:, 1], training_p[:, 0], marker='.', color='#0172B2')
-        ax1.scatter(testing_p[:, 1], testing_p[:, 0], marker='.', color='#CC6600')
+        ax1.scatter(training_p[:, 1], training_p[:, 0], marker='.', color='b')
+        ax1.scatter(testing_p[:, 1], testing_p[:, 0], marker='.', color='y')
         ax2 = fig.add_subplot(122)
         ax2.set_title('negative')
-        ax2.scatter(training_n[:, 1], training_n[:, 0], marker='.', color='#0172B2')
-        ax2.scatter(testing_n[:, 1], testing_n[:, 0], marker='.', color='#CC6600')
+        ax2.scatter(training_n[:, 1], training_n[:, 0], marker='.', color='b')
+        ax2.scatter(testing_n[:, 1], testing_n[:, 0], marker='.', color='y')
         plt.show()
 
     return training_features, training_label, testing_features, testing_label
@@ -137,5 +144,36 @@ def main():
     return 0
 
 
+def get_fire_area():
+    fire_map_f = '../data/fire16/fires_latlong_16_1.shp'
+    fire_map, _ = fire_data_with_geopandas(fire_map_f)
+
+    year_start = 2000
+    year_end = 2015
+    year_predict = 2016
+
+    feature_names = ['latitude', 'longitude', 'windSpeed', 'temperatureHigh', 'temperatureLow',
+                     'humidity', 'pressure', 'cloudCover', 'precipIntensity']
+    features = read_features('../data/darksky.txt')
+
+    training_years = [str(year) for year in range(year_start, year_end + 1)]
+    testing_years = [str(year_predict)]
+
+    training_fire_map = fire_map.loc[fire_map['YEAR_'].isin(training_years)]
+    testing_fire_map = fire_map.loc[fire_map['YEAR_'].isin(testing_years)]
+
+    for row in fire_map:
+        print(row)
+
+    # construct the training matrix
+    training_data, training_label = get_features(training_fire_map.index.tolist(), features, feature_names, fire_map)
+    testing_data, testing_label = get_features(testing_fire_map.index.tolist(), features, feature_names, fire_map)
+
+    np.save('../data/areas.npy', [training_data, training_label, testing_data, testing_label])
+
+    return 0
+
+
 if __name__ == "__main__":
-    main()
+    # main()
+    get_fire_area()

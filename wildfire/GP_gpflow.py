@@ -11,9 +11,15 @@ class Customize_Linear(gpflow.mean_functions.MeanFunction):
         self.A = gpflow.params.Parameter(np.atleast_2d(A))
         self.b = gpflow.params.Parameter(b)
 
+        tmp = np.zeros([9, 7])
+        for i in range(7):
+            tmp[i+2, i] = 1
+        self.remove_loc = tf.constant(tmp, dtype=tf.float64)
+
     @params_as_tensors
     def __call__(self, X):
-        return tf.matmul(X, self.A) + self.b
+        return tf.matmul(tf.matmul(X, self.remove_loc), self.A) + self.b
+        # return tf.matmul(X, self.A) + self.b
 
 
 class Customize_NeuralNet(gpflow.mean_functions.MeanFunction):
@@ -65,9 +71,10 @@ def classify_GP_loc(training_features, training_label, testing_features, testing
 
     if mean_fun == 'linear':
         _, m = training_features.shape
-        linear_mean = Customize_Linear(np.random.random((9, 1)).astype(float), 0.0)
+        linear_mean = Customize_Linear(np.random.random((7, 1)).astype(float), 0.0)
         m = gpflow.models.SGPMC(training_features, training_label.reshape(-1, 1),
-                                kern=gpflow.kernels.RBF(input_dim=9),
+                                kern=gpflow.kernels.RBF(input_dim=2, active_dims=[0, 1]),
+                                # kern=gpflow.kernels.RBF(input_dim=9),
                                 likelihood=gpflow.likelihoods.Bernoulli(), Z=Z, mean_function=linear_mean)
     elif mean_fun == 'neural_net':
         neuralNet_mean = Customize_NeuralNet()

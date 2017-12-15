@@ -138,55 +138,55 @@ def neural_network(training_features, training_label, testing_features, testing_
 def main():
     num_inducing = 100
 
-    print('=======================without location==========================================')
-    print('=======================without location==========================================')
-    training_features, training_label, testing_features, testing_label = read_data(location_info=False)
-
-    print('Neural network:', end='')
-    neural_network(training_features, training_label, testing_features, testing_label)
-
-    print('Linear classification:', end='')
-    classify_linear_model(training_features, training_label, testing_features, testing_label)
-
-    print('SVM:', end='')
-    classify_SVM(training_features, training_label, testing_features, testing_label)
-
-    print('Random forest:', end='')
-    classify_random_forest(training_features, training_label, testing_features, testing_label)
-
-    print('GP:', end='')
-    GP_gpflow.classify_GP_wo_loc(training_features, training_label, testing_features, testing_label,
-                                 num_inducing=num_inducing, input_dim=7)
+    # print('=======================without location==========================================')
+    # print('=======================without location==========================================')
+    # training_features, training_label, testing_features, testing_label = read_data(location_info=False)
+    #
+    # print('Neural network:', end='')
+    # neural_network(training_features, training_label, testing_features, testing_label)
+    #
+    # print('Linear classification:', end='')
+    # classify_linear_model(training_features, training_label, testing_features, testing_label)
+    #
+    # print('SVM:', end='')
+    # classify_SVM(training_features, training_label, testing_features, testing_label)
+    #
+    # print('Random forest:', end='')
+    # classify_random_forest(training_features, training_label, testing_features, testing_label)
+    #
+    # print('GP:', end='')
+    # GP_gpflow.classify_GP_wo_loc(training_features, training_label, testing_features, testing_label,
+    #                              num_inducing=num_inducing, input_dim=7)
 
     print('\n')
     print('=======================with location==========================================')
     print('=======================with location==========================================')
 
     training_features, training_label, testing_features, testing_label = read_data(location_info=True)
+    #
+    # print('Neural network:', end='')
+    # neural_network(training_features, training_label, testing_features, testing_label)
+    #
+    # print('Linear classification:', end='')
+    # classify_linear_model(training_features, training_label, testing_features, testing_label)
+    #
+    # print('SVM:', end='')
+    # classify_SVM(training_features, training_label, testing_features, testing_label)
+    #
+    # print('Random forest:', end='')
+    # classify_random_forest(training_features, training_label, testing_features, testing_label)
 
-    print('Neural network:', end='')
-    neural_network(training_features, training_label, testing_features, testing_label)
-
-    print('Linear classification:', end='')
-    classify_linear_model(training_features, training_label, testing_features, testing_label)
-
-    print('SVM:', end='')
-    classify_SVM(training_features, training_label, testing_features, testing_label)
-
-    print('Random forest:', end='')
-    classify_random_forest(training_features, training_label, testing_features, testing_label)
-
-    print('GP', end='')
-    GP_gpflow.classify_GP_wo_loc(training_features, training_label, testing_features, testing_label,
-                                 num_inducing=num_inducing, input_dim=9)
+    # print('GP', end='')
+    # GP_gpflow.classify_GP_wo_loc(training_features, training_label, testing_features, testing_label,
+    #                              num_inducing=num_inducing, input_dim=9)
 
     print('GP (mean function: linear function and features, kernel: location):', end='')
     GP_gpflow.classify_GP_loc(training_features, training_label, testing_features, testing_label,
                               num_inducing=num_inducing, mean_fun='linear')
 
-    print('GP (mean function: neural network and features, kernel: location):', end='')
-    GP_gpflow.classify_GP_loc(training_features, training_label, testing_features, testing_label,
-                              num_inducing=num_inducing, mean_fun='neural_net')
+    # print('GP (mean function: neural network and features, kernel: location):', end='')
+    # GP_gpflow.classify_GP_loc(training_features, training_label, testing_features, testing_label,
+    #                           num_inducing=num_inducing, mean_fun='neural_net')
 
     return 0
 
@@ -268,6 +268,6 @@ def regression_areas():
 
 
 if __name__ == "__main__":
-    # main()
+    main()
     # draw_dis()
-    regression_areas()
+    # regression_areas()
